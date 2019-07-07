@@ -1,0 +1,35 @@
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+
+Branch	Commit message	Author	Age
+master	Merge tag 'for-linus-20190706' of git://git.kernel.dk/linux-block	Linus Torvalds	11 hours
+ 
+Tag	Download	Author	Age
+v5.2-rc7	linux-5.2-rc7.tar.gz  	Linus Torvalds	7 days
+v5.2-rc6	linux-5.2-rc6.tar.gz  	Linus Torvalds	2 weeks
+v5.2-rc5	linux-5.2-rc5.tar.gz  	Linus Torvalds	3 weeks
+v5.2-rc4	linux-5.2-rc4.tar.gz  	Linus Torvalds	4 weeks
+v5.2-rc3	linux-5.2-rc3.tar.gz  	Linus Torvalds	5 weeks
+v5.2-rc2	linux-5.2-rc2.tar.gz  	Linus Torvalds	6 weeks
+v5.2-rc1	linux-5.2-rc1.tar.gz  	Linus Torvalds	7 weeks
+v5.1	linux-5.1.tar.gz  	Linus Torvalds	2 months
+v5.1-rc7	linux-5.1-rc7.tar.gz  	Linus Torvalds	2 months
+v5.1-rc6	linux-5.1-rc6.tar.gz  	Linus Torvalds	3 months
+[...]
+ 
+Age	Commit message	Author	Files	Lines
+11 hours	Merge tag 'for-linus-20190706' of git://git.kernel.dk/linux-blockHEADmaster	Linus Torvalds	1	-0/+7
+12 hours	Merge tag 'mips_fixes_5.2_2' of git://git.kernel.org/pub/scm/linux/kernel/git...	Linus Torvalds	7	-15/+29
+13 hours	Merge tag 'dmaengine-fix-5.2' of git://git.infradead.org/users/vkoul/slave-dma	Linus Torvalds	3	-25/+35
+13 hours	Merge tag 'scsi-fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/jejb/...	Linus Torvalds	2	-9/+9
+13 hours	Merge branch 'fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs	Linus Torvalds	1	-1/+0
+14 hours	blk-mq: fix up placement of debugfs directory of queue files	Greg Kroah-Hartman	1	-0/+7
+27 hours	Revert "mm: page cache: store only head pages in i_pages"	Linus Torvalds	8	-82/+94
+28 hours	Merge tag 'for-linus' of git://git.kernel.org/pub/scm/virt/kvm/kvm	Linus Torvalds	5	-15/+26
+28 hours	Merge tag 'mtd/fixes-for-5.2-final' of git://git.kernel.org/pub/scm/linux/ker...	Linus Torvalds	7	-39/+22
+28 hours	Merge branch 'i2c/for-current' of git://git.kernel.org/pub/scm/linux/kernel/g...	Linus Torvalds	1	-0/+1
+[...]
+ 
+Clone
+git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux.git
