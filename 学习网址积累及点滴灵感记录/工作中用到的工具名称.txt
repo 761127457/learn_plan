@@ -1,0 +1,10 @@
+办公：D-BOX、Adobe Reader、office word、excel、ppt、viso、espace
+IDE：visual studio
+代码编辑：soure insight、visual studio code
+文本编辑：UltraEdit、notepad++
+代码管理：git、tortoisegit、svn、tortoisesvn
+调测：xshell、mobaxterm、wetest、ipop、vpn client、wftpd32、tftp32、nport、comhigher utility、winscp、putty
+远程桌面：mstsc、remote desk organizer
+文件搜索：everything、listary
+笔记：ediary
+文件管理器：clover、qdir
