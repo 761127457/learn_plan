@@ -1,0 +1,3 @@
+开发者安全测试：掌握DT-Fuzz测试结果评估能力、了解DT-Fuzz基本原理、掌握DT-Fuzz用例设计，编写和执行能力。
+现代软件工程：掌握高级软件工程方法（软件复用、CBSE、分布式软件工程、面向服务的软件工程、系统工程、系统孩子系统、应用架构、形式规范Formal Specificati、面向方面的软件工程Aspect-oriented-Software Engineering）、掌握新型研发模式与方法（CD、DevOps、TVI/VPL、JAD、CED、内源精益看板、精创等）
+测试开发与执行：了解框架的基础功能、掌握主流测试框架（DTCenter、GTest、CPPUnit、JUnit、Mockito、PowerMock）的基本使用方法、参数化测试代码写作方法；能熟练应用服务流水线工具链；
