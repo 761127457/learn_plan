@@ -1,0 +1,64 @@
+1、收藏20200612-225650.html文件里面的  充电学习平台
+
+2、搜索指令（不管是百度、Google还是搜狗都适用）
+1）逻辑与/或：AND、OR
+
+注意AND、OR必须大写，否则会被认为是普通的单词，而不是搜索指令。
+与普通编程语言不一样的是，OR指令优先于AND指令。
+简写：AND指令一般以空格代替，不明确写出。另外AND指令还可以用+代替。OR指令可用|代替。
+样例：Inverted OR Signature files OR file OR index，它等同于 (Inverted OR Signature) (files OR file OR index)
+2）逻辑非：-
+
+样例：搜索引擎 历史 -文化 -中国历史 -世界历史
+3）完整匹配："…"
+
+样例："world war I" 表示搜索一次世界大战。
+4）通配符：*?
+
+与我们通常的习惯一致，“*”代表一连串字符，“?”代表单个字符。
+样例：progr?m
+提示：不要指望Google可用通过progr?m搜索到program，因为progr和m分别被当作一个独立的单词，并且这两个单词之间允许出现一个字符，如此而已。
+5）site: 在某个网站或域名下搜索
+
+样例：搜索引擎 技巧 site:edu.cn
+这表示要在中文教育科研网站（edu.cn）上关于搜索引擎技巧的页面。
+6）filetype: 搜索某种类型的文件
+
+样例：filetype:pdf
+这表示只搜索pdf文件。
+7）in指令: 位置关键词查找。
+
+intitle: 在网页标题中查找。这通常对讨论比较多的热门话题很有效。例如：intitle:"GeForce 7800"+测试
+allintitle: 该指令属于排他指令，不能与其他指令混用。
+
+例如：allintitile:"GeForce 7800" 测试 与 intitle:"GeForce 7800"+测试 的含义一致。但是，allintitile是排他的，不能加上其他非intitle方面的限制条件。
+注意：在这里，你会发现用+代替AND指令是很有意思的。如果没有+指令，我们就需要写：intitle:"GeForce 7800" intitle:测试，因为Google不支持这样的写法：intitle:("GeForce 7800" 测试)
+
+inurl: 在网页的url地址中查找。例如：inurl:dowload 表示查找url中包含download的网页。
+allinurl: inurl的排他指令。
+inanchor: 在网页的链接锚中查找。
+
+需要注意区别于inurl：inurl是网页本身的url地址，而inanchor是在外部用于指向该url地址的文本（<a>…</a>之间文本）中找。
+例如：inanchor:download，你可能会发现有FlashGet最佳的下载管理程式，而该页面中根本就没有download字样。
+
+allinanchor: inanchor的排他指令。
+intext: 在正文中检索。
+allintext: intext的排他指令。
+8）link: 搜索所有链接到某个URL地址的网页
+
+最重要的用途：迅速判断一个网页的“热度”。
+例如：link:www.newhua.com 表示所有指向“华军软件园”外部链接。
+注意：和其他指令类似，link:和url之间不能有空格。之所以特别指出这一点，是因为网上有教程说link和allinurl等一样，是排他指令，中间可以有空格。我不太了解Google搜索指令的发展历史，只能猜测曾经如此。
+9）related: 寻找某网页的“类似网页”。
+
+例如：related:www.newhua.com 表示找和“华军软件园”类似的网页。
+这条指令其实Google自己用得很广泛，只是可能没有引起你的注意罢了。在Google的每条搜索结果中，均有一个“类似网页”的链接。就是它了。
+10）cache: 网页快照（略）。
+
+11）daterange: 据说可以限定网页的更新时间。但是我没有试出来。
+
+12）数值范围： ..
+
+例如：数码相机 600..900 万像素 3000..4000 元
+注意：“900”与“万”之间必须有空格。
+
