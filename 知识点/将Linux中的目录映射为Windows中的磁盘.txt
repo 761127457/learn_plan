@@ -1,0 +1,96 @@
+ 一、将Linux中的目录映射为Windows中的磁盘
+
+1、实现windows访问普通Linux共享目录
+
+ step1 安装smba
+
+ step2 配置一个windows通过samba访问Linux目录时，需要用到的用户名和密码：
+
+           smbpasswd -a username
+
+step3 在Linux服务器中修改etc/samba/smb.conf文件，在文件中添加
+
+ [username]
+       path = /home/share_dir
+       writeable = yes
+       browseable = no
+       valid users = username
+
+path可以换成其他你想要映射的目录，下边vaild users需要指定合适的用户，这个用户需要跟windows中输入的用户一致
+
+step4 重启smba服务 
+
+      sudo service smbd restart
+
+   在windows中找到
+
+             
+
+                                                                                图1
+
+                   
+
+                                                                                       图 2
+
+图2中的驱动器是自动分配的，文件夹需要制定Linux服务器ip\share的形式。
+
+2、实现Windows访问Linux共享目录中的软连接目录
+
+    在有些情况下，会将其他用户的目录软连接到自己的用户目录下，此时再用windows访问这些软连接的目录就会提示无权限访问，那么需要执行以下步骤来获取访问通过软连接的目录
+
+step1 修改etc/samba/smb.conf文件
+
+在[global]域中，添加
+
+allow insecure wide links = yes
+
+在[share]域中，添加
+follow symlinks = yes
+wide links = yes
+
+保存
+
+step2 重启smbd服务
+
+sudo service smbd restart
+
+在windows端刷新下，应该就可以正常访问了。
+
+ 
+
+ 
+
+2、Linux系统之间目录共享
+
+在服务端，需要安装nfs与portmap等软件
+
+然后通过在/etc/exports添加
+
+/home/sharedir  *(rw,sync,no_subtree_check,no_root_squash)
+
+其中/home/sharedir是服务端要共享的目录 ，*表示所有的客户端都可以访问，后边的参数列表可以不用管
+
+然后使用
+
+service portmap restart
+
+service nfs-server restart
+
+命令启动相关服务
+
+ 
+
+在客户端
+
+需要使用
+
+sudo mount -t nfs ip:/home/sharedir  sharedir
+
+进行访问，后边那个dir需要手动创建
+
+ubuntu10.0版本之后启动使用下边的命令
+
+sudo service nfs-server start
+————————————————
+版权声明：本文为CSDN博主「沙河边の搬砖工」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/qq_34113993/article/details/88790310
