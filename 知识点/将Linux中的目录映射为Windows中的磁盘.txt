@@ -1,3 +1,32 @@
+
+三、安装完成后，对smaba进行一下配置vim /etc/samba/smb.conf，添加如下参数
+security = user
+ [public]
+ path = /fdsk
+ public = yes
+ writeable = yes
+ browseable = yes
+ guest ok = yes
+ \\106.52.115.154\public
+ 
+security = user
+[ShareFiles]
+comment = Shared Folder require password
+path = /home/ubuntu
+public = yes
+writable = yes
+valid users = ubuntu
+create mask = 0777
+directory mask = 0777
+force user = nobody
+force group = nogroup
+available = yes
+browseable = yes
+guest ok = yes
+\\106.52.115.154\ShareFiles 
+ 
+ 
+ 
  一、将Linux中的目录映射为Windows中的磁盘
 
 1、实现windows访问普通Linux共享目录
@@ -7,6 +36,15 @@
  step2 配置一个windows通过samba访问Linux目录时，需要用到的用户名和密码：
 
            smbpasswd -a username
+		   smbpasswd -a test
+		   sudo smbpasswd -a ubuntu
+ubuntu_123
+test
+groupadd ubuntu -g 6001
+groupadd test -g 6000
+useradd ubuntu -u 6001 -g 6001
+useradd test -u 6000 -g 6000
+\\106.52.115.154\home\ubuntu
 
 step3 在Linux服务器中修改etc/samba/smb.conf文件，在文件中添加
 
@@ -16,12 +54,18 @@ step3 在Linux服务器中修改etc/samba/smb.conf文件，在文件中添加
        browseable = no
        valid users = username
 
+ [username]
+       path = /home/ubuntu
+       writeable = yes
+       browseable = no
+       valid users = test
 path可以换成其他你想要映射的目录，下边vaild users需要指定合适的用户，这个用户需要跟windows中输入的用户一致
 
 step4 重启smba服务 
 
       sudo service smbd restart
-
+查找samba进程
+ps -ef|grep smbd
    在windows中找到
 
              

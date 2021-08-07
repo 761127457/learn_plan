@@ -1,0 +1,192 @@
+简介： 很多socket编程的初学者可能会遇到这样的问题：如果先ctrl+c结束服务器端程序的话，再次启动服务器就会出现Address already in use这个错误，或者你的程序在正常关闭服务器端socket后还是有这个问题。
+很多socket编程的初学者可能会遇到这样的问题：如果先ctrl+c结束服务器端程序的话，再次启动服务器就会出现Address already in use这个错误，或者你的程序在正常关闭服务器端socket后还是有这个问题。正如下面的这段简单的socket程序。
+
+ server.c
+
+#include <sys/types.h> 
+#include <sys/socket.h> 
+#include <stdio.h> 
+#include <netinet/in.h> 
+#include <arpa/inet.h>
+#include <unistd.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 40
+
+int main() 
+{       
+    char buf[BUFFER_SIZE];
+    int server_sockfd, client_sockfd; 
+        int sin_size=sizeof(struct sockaddr_in); 
+    struct sockaddr_in server_address; 
+    struct sockaddr_in client_address; 
+    memset(&server_address,0,sizeof(server_address));
+    server_address.sin_family = AF_INET; 
+    server_address.sin_addr.s_addr = INADDR_ANY; 
+    server_address.sin_port = htons(12000); 
+    // 建立服务器端socket 
+    if((server_sockfd = socket(AF_INET, SOCK_STREAM, 0))<0)
+    {
+        perror("server_sockfd creation failed");
+        exit(EXIT_FAILURE);
+    }
+    // 将套接字绑定到服务器的网络地址上 
+    if((bind(server_sockfd,(struct sockaddr *)&server_address,sizeof(struct sockaddr)))<0)
+    {
+        perror("server socket bind failed");
+        exit(EXIT_FAILURE);
+    }
+    // 建立监听队列
+    listen(server_sockfd,5);
+    // 等待客户端连接请求到达
+    client_sockfd=accept(server_sockfd,(struct sockaddr *)&client_address,(socklen_t*)&sin_size);
+    if(client_sockfd<0)
+    {
+        perror("accept client socket failed");
+        exit(EXIT_FAILURE);
+    }
+    // 接收客户端数据
+    if(recv(client_sockfd,buf,BUFFER_SIZE,0)<0)
+    {
+        perror("recv client data failed");
+        exit(EXIT_FAILURE);
+    }
+    printf("receive from client:%s/n",buf);
+    // 发送数据到客户端
+    if(send(client_sockfd,"I have received your message.",BUFFER_SIZE,0)<0)
+    {
+        perror("send failed");
+        exit(EXIT_FAILURE);
+    }
+    close(client_sockfd);
+    close(server_sockfd);
+    exit(EXIT_SUCCESS);
+}
+ 
+
+client.c
+
+#include <sys/types.h> 
+#include <sys/socket.h> 
+#include <stdio.h> 
+#include <netinet/in.h>                                                
+#include <arpa/inet.h> 
+#include <unistd.h> 
+#include <stdlib.h>
+
+#define BUFFER_SIZE 40
+
+int main() 
+{ 
+    char buf[BUFFER_SIZE];
+    int client_sockfd; 
+    int len; 
+    struct sockaddr_in address;// 服务器端网络地址结构体                                           
+     int result; 
+    client_sockfd = socket(AF_INET, SOCK_STREAM, 0);// 建立客户端socket                               
+    address.sin_family = AF_INET; 
+    address.sin_addr.s_addr = inet_addr("127.0.0.1");             
+    address.sin_port = htons(12000); 
+    len = sizeof(address);
+    // 与远程服务器建立连接
+    result = connect(client_sockfd, (struct sockaddr *)&address, len); 
+    if(result<0) 
+    { 
+         perror("connect failed"); 
+         exit(EXIT_FAILURE); 
+    } 
+    printf("Please input the message:");
+    scanf("%s",buf);
+    send(client_sockfd,buf,BUFFER_SIZE,0);
+    recv(client_sockfd,buf,BUFFER_SIZE,0);
+    printf("receive data from server: %s/n",buf);
+    close(client_sockfd); 
+    return 0; 
+}
+ 在成功的运行了第一次之后，当你再次启动服务器端程序时，./server就变得邪恶起来，在bind()这个函数中居然出现了Address already in use这个错误。
+
+                                  
+
+      然后你开始迷惑了，难道是忘记将socket给关闭了，或是关闭socket的顺序不对？经过种种猜测与试验，你发现问题毫无进展......过了一会，当你再次抱着试试看的态度重新在linux的“黑色终端”中输入./server时，程序居然运行了，什么情况？究其原因，是socket选项在捣鬼。下面是IBM官网上对这一情况的具体解释，参见http://www.ibm.com/developerworks/cn/linux/l-sockpit/。
+
+      bind 普遍遭遇的问题是试图绑定一个已经在使用的端口。该陷阱是也许没有活动的套接字存在，但仍然禁止绑定端口（bind 返回 EADDRINUSE），它由 TCP 套接字状态 TIME_WAIT 引起。该状态在套接字关闭后约保留 2 到 4 分钟。在 TIME_WAIT 状态退出之后，套接字被删除，该地址才能被重新绑定而不出问题。
+
+等待 TIME_WAIT 结束可能是令人恼火的一件事，特别是如果您正在开发一个套接字服务器，就需要停止服务器来做一些改动，然后重启。幸运的是，有方法可以避开 TIME_WAIT 状态。可以给套接字应用 SO_REUSEADDR 套接字选项，以便端口可以马上重用。
+
+考虑清单 3 的例子。在绑定地址之前，我以 SO_REUSEADDR 选项调用 setsockopt。为了允许地址重用，我设置整型参数（on）为 1 （不然，可以设为 0 来禁止地址重用）。
+
+      按照IBM的做法，我重新改写了server.c的代码。
+
+server.c
+
+#include <sys/types.h> 
+#include <sys/socket.h> 
+#include <stdio.h> 
+#include <netinet/in.h> 
+#include <arpa/inet.h>
+#include <unistd.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 40
+
+int main() 
+{       
+    char buf[BUFFER_SIZE];
+    int server_sockfd, client_sockfd; 
+        int sin_size=sizeof(struct sockaddr_in); 
+    struct sockaddr_in server_address; 
+    struct sockaddr_in client_address; 
+    memset(&server_address,0,sizeof(server_address));
+    server_address.sin_family = AF_INET; 
+    server_address.sin_addr.s_addr = INADDR_ANY; 
+    server_address.sin_port = htons(12000); 
+    // 建立服务器端socket 
+    if((server_sockfd = socket(AF_INET, SOCK_STREAM, 0))<0)
+    {
+        perror("server_sockfd creation failed");
+        exit(EXIT_FAILURE);
+    }
+    // 设置套接字选项避免地址使用错误
+    int on=1;
+    if((setsockopt(server_sockfd,SOL_SOCKET,SO_REUSEADDR,&on,sizeof(on)))<0)
+    {
+        perror("setsockopt failed");
+        exit(EXIT_FAILURE);
+    }
+    // 将套接字绑定到服务器的网络地址上 
+    if((bind(server_sockfd,(struct sockaddr *)&server_address,sizeof(struct sockaddr)))<0)
+    {
+        perror("server socket bind failed");
+        exit(EXIT_FAILURE);
+    }
+    // 建立监听队列
+    listen(server_sockfd,5);
+    // 等待客户端连接请求到达
+    client_sockfd=accept(server_sockfd,(struct sockaddr *)&client_address,(socklen_t*)&sin_size);
+    if(client_sockfd<0)
+    {
+        perror("accept client socket failed");
+        exit(EXIT_FAILURE);
+    }
+    // 接收客户端数据
+    if(recv(client_sockfd,buf,BUFFER_SIZE,0)<0)
+    {
+        perror("recv client data failed");
+        exit(EXIT_FAILURE);
+    }
+    printf("receive from client:%s/n",buf);
+    // 发送数据到客户端
+    if(send(client_sockfd,"I have received your message.",BUFFER_SIZE,0)<0)
+    {
+        perror("send failed");
+        exit(EXIT_FAILURE);
+    }
+    close(client_sockfd);
+    close(server_sockfd);
+    exit(EXIT_SUCCESS);
+}
+这次，让我们再次反复的启动服务器，尽情的在“黑窗户”里面输入./server ./server ./server ......服务器的程序好像突然间变乖了，呵呵，童鞋们，为自己的成就庆祝吧！！！
+
+来源于：
+https://developer.aliyun.com/article/297734
+

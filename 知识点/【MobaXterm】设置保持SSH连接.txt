@@ -1,0 +1,29 @@
+ssh远程连接会在无操作时自动断开连接。为了保持程序运行和连接，需要设置保持连接。
+
+1.MobaXterm
+如果使用了MobaXterm客户端，那么需要在设置里点选setting>SSH>sessions setting>勾选ssh Keepalive
+
+ keepalive
+
+选择下图的选项即可：
+
+2.SSH
+如果使用的是ssh则需要设定超时连接的时间/etc/ssh/sshd_config：
+
+服务器端要设置客户的超时重连：
+ClientAliveCountMax 3    #默认重连3次
+ClientAliveInterval 30   #30s重连一次
+1
+2
+客户端要设置服务器端的超时重连(user 设置文件在~/.ssh/下)：
+ServerAliveCountMax 3
+ServerAliveInterval 30
+1
+2
+重启服务service sshd或service sshd restart
+
+另一种很直接的方法，直接使用ssh命令参数：
+ssh -o ServerAliveInterval 30将超时重连传进去。
+————————————————
+版权声明：本文为CSDN博主「hitrjj」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/u014636245/article/details/83855860

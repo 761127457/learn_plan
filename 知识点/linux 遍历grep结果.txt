@@ -1,0 +1,42 @@
+简言
+本文仅在记录、解释如何遍历"grep"结果集，方便以后自己查阅。
+
+grep
+grep命令大多通过管道符（|）连接别的命令一起使用，从而达到搜素某目标的目的。grep的结果是一个集合而非字符串，所以如果想遍历grep结果，直接使用for [one] in [collection]即可。
+
+测试grep结果是集合
+function check_param_two_correct(){ 
+    node_name_list=`ls /data/tomcat | grep node`;
+
+    echo $node_name_list;
+
+    expr length '123';
+
+    expr length $node_name_list;
+}
+
+
+执行这个方法，linux会提示你“expr length $node_name_list;”语法错误，所以grep的结果是个集合，而非字符串。
+
+注：
+
+expr length $node_name_list;
+目的是输出某个字符串的长度
+
+遍历方法体：
+
+function check_param_two_correct(){ 
+    node_name_list=`ls /data/tomcat | grep node`;
+
+    echo $node_name_list;
+
+    for each in $node_name_list
+        do
+            echo $each
+        done
+}
+
+作者：风吟空城
+链接：https://www.jianshu.com/p/5b91f4f577ed
+来源：简书
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。

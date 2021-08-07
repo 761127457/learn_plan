@@ -1,0 +1,36 @@
+需求：再服务器上启动Springboot项目上，使用Shell脚本作为启动脚本去执行，然后调用jar包。在本项目，需要从配置文件application.properties中去获取端口号，然后根据端口号去获取进程的PID。
+
+问题：第一，如果获取配置文件中的端口号；第二，把端口号获取到赋予变量时，查询PID时grep的参数是变量，结果查询不出？
+
+解决措施：
+
+针对第一个问题：
+
+在Shell脚本中，使用$(linux命令)或`Linux命令`去把命令查询结果赋予变量
+
+server_port=$(cat ./application.properties | grep "xxl.job.executor.port" | tail -n 1 | cut -d "=" -f 2 | awk '{print $1}')
+# 解析
+# cat ./application.properties 读取和当前脚本同目录下application.properties文件
+# grep "xxl.job.executor.port"    查询"xxl.job.executro.port"属性所在行内容
+# tail -n 1           显示当前数据第一行
+# cut -d "=" -f 2     以=为分隔符，截取第二项
+# awk '{print $1}'    输出当前数据第一项
+# server_port=$(xxx)       把$()中所输出的数据赋予变量server_port 
+针对第二个问题，使用以下命令根据端口号去获取PID值
+
+netstat -nlp | grep $server_port | awk '{print $7}' | awk -F"/" '{ print $1 }'
+却发现如果把变量$server_port换成固定端口号（如直接在shell脚本中使用server_port=9992）是可以查询出PID,但是动态从配置文件中获取却没有值？这是为什么呢？
+
+原因：配置文件application.properties是windows下编辑的文件内容，在Linux中它的回车/换行符是不一样的，所以从配置文件中获取的数据赋予server_port变量，虽然使用echo $server_port输出都是9992（假设配置文件中设置为9992），但它实际上还带了一个\r换行符。
+
+可以使用命令显示出不可见字符的Shell脚本内容，发现变量$server_port的值为"9992\r"
+
+bash -x xxx.sh
+解决办法：在第一个问题的解决方案（即从配置文件中获取端口号）的命令中加一条命令用于去除\r
+
+server_port=$(cat ./application.properties | grep "xxl.job.executor.port" | tail -n 1 | cut -d "=" -f 2 | awk '{print $1}' | tr -d '\r')
+ 
+————————————————
+版权声明：本文为CSDN博主「枫雨血痕」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/lyxuefeng/article/details/108278243
+
